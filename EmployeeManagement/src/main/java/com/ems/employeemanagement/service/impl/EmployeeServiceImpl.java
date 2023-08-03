@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.service.impl;
 
+import com.ems.employeemanagement.dto.EmployeeRequest;
 import com.ems.employeemanagement.exception.ResourceNotFoundException;
 import com.ems.employeemanagement.model.Employee;
 import com.ems.employeemanagement.repository.EmployeeRepository;
@@ -24,8 +25,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public Employee saveEmployee(Employee employee,String traceId) {
+    public Employee saveEmployee(EmployeeRequest employeeRequest, String traceId) {
         logger.info("{}: Function start: EmployeeServiceImpl.saveEmployee()",traceId);
+        Employee employee=Employee.build(0,employeeRequest.getName(),employeeRequest.getRole(),employeeRequest.getSalary());
         Employee newEmployee = employeeRepository.save(employee);
         logger.info("{}: Function end: EmployeeServiceImpl.saveEmployee()",traceId);
         return newEmployee;

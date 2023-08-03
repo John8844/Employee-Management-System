@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.controller;
 
+import com.ems.employeemanagement.dto.EmployeeRequest;
 import com.ems.employeemanagement.model.Employee;
 import com.ems.employeemanagement.service.EmployeeService;
 import com.ems.employeemanagement.util.Util;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,15 +28,15 @@ public class EmployeeController {
 
     /**
      * REST API to create Employee
-     * @param employee
+     * @param employeeRequest
      * @return success message
      */
 
     @PostMapping
-    public ResponseEntity<Employee> saveEmployee(@RequestBody Employee employee){
+    public ResponseEntity<Employee> saveEmployee(@RequestBody @Valid EmployeeRequest employeeRequest){
         String traceId = Util.getTrackingId();
-        logger.info("{}: Post Request to create Employee, Employee: {}",traceId,employee.getName());
-        Employee savedEmployee =  employeeService.saveEmployee(employee,traceId);
+        logger.info("{}: Post Request to create Employee, Employee: {}",traceId,employeeRequest.getName());
+        Employee savedEmployee =  employeeService.saveEmployee(employeeRequest,traceId);
         return new ResponseEntity<Employee>(savedEmployee, HttpStatus.CREATED);
     }
 

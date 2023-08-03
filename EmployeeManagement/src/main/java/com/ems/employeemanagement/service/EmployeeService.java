@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.service;
 
+import com.ems.employeemanagement.dto.EmployeeRequest;
 import com.ems.employeemanagement.model.Employee;
 
 import java.util.List;
@@ -8,11 +9,11 @@ public interface EmployeeService {
 
     /**
      * Function to create employee
-     * @param employee
+     * @param employeeRequest
      * @param traceId
      * @return
      */
-    Employee saveEmployee(Employee employee,String traceId);
+    Employee saveEmployee(EmployeeRequest employeeRequest, String traceId);
 
     /**
      * Function to list all employees
