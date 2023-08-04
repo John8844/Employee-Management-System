@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
+    Employee findEmployeeByName(String empName);
+    Employee findEmployeeById(int id);
 }

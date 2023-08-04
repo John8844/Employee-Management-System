@@ -1,14 +1,10 @@
 package com.ems.employeemanagement.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@AllArgsConstructor(staticName = "build")
-@NoArgsConstructor
-@Data
+
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -26,9 +22,33 @@ public class Employee {
     @Column(name = "salary",nullable = false)
     private int salary;
 
+    public Employee() {
+    }
+
+    public Employee(String name, String role, int salary) {
+        this.name = name;
+        this.role = role;
+        this.salary = salary;
+    }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public int getSalary() {
+        return salary;
     }
 
     public void setName(String name) {

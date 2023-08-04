@@ -2,6 +2,7 @@ package com.ems.employeemanagement.service.impl;
 
 import com.ems.employeemanagement.dto.EmployeeRequest;
 import com.ems.employeemanagement.exception.ResourceNotFoundException;
+import com.ems.employeemanagement.exception.ValidationException;
 import com.ems.employeemanagement.model.Employee;
 import com.ems.employeemanagement.repository.EmployeeRepository;
 import com.ems.employeemanagement.service.EmployeeService;
@@ -25,16 +26,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public Employee saveEmployee(EmployeeRequest employeeRequest, String traceId) {
+    public Employee saveEmployee(EmployeeRequest employeeRequest, String traceId) throws ValidationException {
+        Employee employeeInDB = fetchEmployee(employeeRequest.getName());
         logger.info("{}: Function start: EmployeeServiceImpl.saveEmployee()",traceId);
-        Employee employee=Employee.build(0,employeeRequest.getName(),employeeRequest.getRole(),employeeRequest.getSalary());
+        if (employeeInDB!=null) throw new ValidationException("Employee already Exist..");
+        if (employeeRequest.getSalary()<5000) throw new ValidationException("Employee Salary Must Greater than 5000...");
+        Employee employee= new Employee(employeeRequest.getName(),employeeRequest.getRole(),employeeRequest.getSalary());
         Employee newEmployee = employeeRepository.save(employee);
         logger.info("{}: Function end: EmployeeServiceImpl.saveEmployee()",traceId);
         return newEmployee;
     }
 
     @Override
-    public List<Employee> getAllEmployee(String traceId) {
+    public List<Employee> getAllEmployee(String traceId) throws ValidationException {
         logger.info("{}: Function start: EmployeeServiceImpl.getAllEmployees()",traceId);
         List<Employee> employees=employeeRepository.findAll();
         logger.info("{}: Function end: EmployeeServiceImpl.getAllEmployees()",traceId);
@@ -42,21 +46,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getEmployeeBtId(int id,String traceId) {
+    public Employee getEmployeeBtId(int id,String traceId) throws ValidationException{
+        Employee employeeInDB=findbyid(id);
         logger.info("{}: Function start: EmployeeServiceImpl.getEmployeeById()",traceId);
-        Optional<Employee> employee=employeeRepository.findById(id);
-        if(employee.isPresent()){
-            logger.info("{}: Function end: EmployeeServiceImpl.getEmployeeById()",traceId);
-            return employee.get();
-        }else {
-            throw new ResourceNotFoundException("Employee","Id",id);
-        }
+        if (employeeInDB==null) throw new ValidationException("Employee doesn't exist...");
+        Employee employee= employeeRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Employee","Id",id));
+        logger.info("{}: Function end: EmployeeServiceImpl.getEmployeeById()",traceId);
+        return employee;
 
     }
 
     @Override
-    public Employee updateEmployee(Employee employee, int id, String traceId) {
+    public Employee updateEmployee(Employee employee, int id, String traceId) throws ValidationException{
+        Employee employeeInDB=findbyid(id);
         logger.info("{}: Function start: EmployeeServiceImpl.updateEmployee()",traceId);
+        if (employeeInDB==null) throw new ValidationException("You Can't Update. Because, Employee doesn't exist...");
         Employee oldEmployee = employeeRepository.findById(id).orElseThrow( ()->new ResourceNotFoundException("Employee", "Id", id));
 
         oldEmployee.setName(employee.getName());
@@ -69,10 +73,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployee(int id,String traceId) {
+    public void deleteEmployee(int id,String traceId) throws ValidationException{
+        Employee employeeInDB=findbyid(id);
         logger.info("{}: Function start: EmployeeServiceImpl.deleteEmployee()",traceId);
+        if (employeeInDB==null) throw new ValidationException("You Can't Delete. Because, Employee doesn't exist...");
         employeeRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Employee","Id",id));
         employeeRepository.deleteById(id);
         logger.info("{}: Function end: EmployeeServiceImpl.deleteEmployee()",traceId);
+    }
+
+    public Employee fetchEmployee(String empName){
+        return employeeRepository.findEmployeeByName(empName);
+    }
+    public Employee findbyid(int id){
+        return employeeRepository.findEmployeeById(id);
     }
 }
