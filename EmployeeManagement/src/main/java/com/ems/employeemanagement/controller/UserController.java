@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.controller;
 
+import com.ems.employeemanagement.dto.LoginRequest;
 import com.ems.employeemanagement.dto.UserRequest;
 import com.ems.employeemanagement.exception.ValidationException;
 import com.ems.employeemanagement.model.response.ResponseMessage;
@@ -28,6 +29,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * REST API for New User Registration
+     * @param userRequest
+     * @return
+     */
+
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody @Valid UserRequest userRequest){
         String traceId = Util.getTrackingId();
@@ -39,6 +46,34 @@ public class UserController {
         catch (ValidationException v) {
             return new ResponseEntity<>(new ResponseMessage(403, ResponseStatus.Failure,v.getExceptionMessage()), HttpStatus.FORBIDDEN);
         }
+        catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(new ResponseMessage(500, ResponseStatus.Failure,"Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
+    }
+
+    /**
+     * REST API for User Log in
+     * @param loginRequest
+     * @return
+     * @throws ValidationException
+     */
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) throws ValidationException{
+        String traceId = Util.getTrackingId();
+        logger.info("{}: Post Request to login User, Email: {}",traceId,loginRequest.getEmail());
+        try {
+            userService.login(loginRequest,traceId);
+            return new ResponseEntity<>(new ResponseMessage(201, ResponseStatus.Successful,"User Logged in Successfully.."),HttpStatus.CREATED);
+        }
+        catch (ValidationException v) {
+            return new ResponseEntity<>(new ResponseMessage(403, ResponseStatus.Failure,v.getExceptionMessage()), HttpStatus.FORBIDDEN);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(new ResponseMessage(500, ResponseStatus.Failure,"Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

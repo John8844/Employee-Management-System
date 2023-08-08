@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.service.impl;
 
+import com.ems.employeemanagement.dto.LoginRequest;
 import com.ems.employeemanagement.dto.UserRequest;
 import com.ems.employeemanagement.model.User;
 import com.ems.employeemanagement.exception.ValidationException;
@@ -36,7 +37,15 @@ public class UserServiceImpl implements UserService {
         return newUser;
     }
 
-
+    @Override
+    public User login(LoginRequest loginRequest, String traceId) throws ValidationException{
+        logger.info("{}: Function start: UserServiceImpl.login()",traceId);
+        User userInDb = userRepository.findByEmailIgnoreCaseAndPassword(loginRequest.getEmail(),loginRequest.getPassword());
+        if (userInDb==null) throw new ValidationException("User doesn't Exist..");
+        User user = new User(loginRequest.getEmail(),loginRequest.getPassword());
+        logger.info("{}: Function end: UserServiceImpl.login()",traceId);
+        return user;
+    }
 
 
     public User fetchUser(String userName){

@@ -7,6 +7,9 @@ public class ResponseMessage {
 
     private String message;
 
+    public ResponseMessage() {
+    }
+
     public ResponseMessage(int statusCode, ResponseStatus responseStatus, String message) {
         this.statusCode = statusCode;
         this.responseStatus = responseStatus;
