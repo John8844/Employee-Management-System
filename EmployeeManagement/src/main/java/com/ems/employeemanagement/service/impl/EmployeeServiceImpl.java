@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -61,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employeeInDB=findbyid(id);
         logger.info("{}: Function start: EmployeeServiceImpl.updateEmployee()",traceId);
         if (employeeInDB==null) throw new ValidationException("You Can't Update. Because, Employee doesn't exist...");
-        Employee oldEmployee = employeeRepository.findById(id).orElseThrow( ()->new ResourceNotFoundException("Employee", "Id", id));
+        Employee oldEmployee = employeeInDB;
 
         oldEmployee.setName(employee.getName());
         oldEmployee.setRole(employee.getRole());

@@ -9,7 +9,6 @@ import com.ems.employeemanagement.service.EmployeeService;
 import com.ems.employeemanagement.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +55,7 @@ public class EmployeeController {
      */
 
     @GetMapping
-    public ResponseEntity<?> getAllEmployee() throws ValidationException{
+    public ResponseEntity<?> getAllEmployee(){
         try {
             String traceId = Util.getTrackingId();
             logger.info("{}: Get Request to get all Employees.",traceId);

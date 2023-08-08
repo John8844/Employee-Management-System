@@ -29,11 +29,11 @@ public class ResponseMessage {
         this.responseStatus = responseStatus;
     }
 
-    public String getDescription() {
+    public String getMessage() {
         return message;
     }
 
-    public void setDescription(String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 }
