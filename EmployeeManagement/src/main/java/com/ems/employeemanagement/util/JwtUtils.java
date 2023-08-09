@@ -3,6 +3,7 @@ package com.ems.employeemanagement.util;
 import com.ems.employeemanagement.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,6 +17,7 @@ public class JwtUtils {
 
         Claims claims= Jwts.claims().setIssuer(user.getName()).setIssuedAt(issuedAt);
 
-        return Jwts.builder().setClaims(claims).compact();
+        return Jwts.builder().setClaims(claims)
+                .signWith(SignatureAlgorithm.HS512,secret).compact();
     }
 }

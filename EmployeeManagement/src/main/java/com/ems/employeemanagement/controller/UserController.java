@@ -9,6 +9,7 @@ import com.ems.employeemanagement.service.UserService;
 import com.ems.employeemanagement.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 @RestController
 public class UserController {
 
+    @Autowired
     private final UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
