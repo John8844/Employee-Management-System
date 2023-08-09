@@ -1,5 +1,9 @@
 package com.ems.employeemanagement.advice;
 
+import com.ems.employeemanagement.model.response.ResponseMessage;
+import com.ems.employeemanagement.model.response.ResponseStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,5 +21,16 @@ public class ExceptionHandlerApp {
             errorMap.put(error.getField(),error.getDefaultMessage());
         });
         return errorMap;
+    }
+    @ExceptionHandler
+    public ResponseEntity handleAccessDeniedException(AccessDeniedException e){
+
+        ResponseMessage responseMessage=new ResponseMessage();
+
+        responseMessage.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        responseMessage.setResponseStatus(ResponseStatus.Failure);
+        responseMessage.setMessage("Access Denied..");
+
+        return ResponseEntity.status(responseMessage.getStatusCode()).body(responseMessage);
     }
 }

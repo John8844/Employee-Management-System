@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.util;
 
+import com.ems.employeemanagement.advice.AccessDeniedException;
 import com.ems.employeemanagement.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,5 +20,13 @@ public class JwtUtils {
 
         return Jwts.builder().setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512,secret).compact();
+    }
+
+    public void verify(String authorization){
+        try{
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(authorization);
+        }catch (Exception e){
+            throw new AccessDeniedException("Access Denied..");
+        }
     }
 }
