@@ -65,8 +65,8 @@ public class UserController {
         String traceId = Util.getTrackingId();
         logger.info("{}: Post Request to login User, Email: {}",traceId,loginRequest.getEmail());
         try {
-            userService.login(loginRequest,traceId);
-            return new ResponseEntity<>(new ResponseMessage(201, ResponseStatus.Successful,"User Logged in Successfully.."),HttpStatus.CREATED);
+            String token = userService.login(loginRequest,traceId);
+            return new ResponseEntity<>(new ResponseMessage(201, ResponseStatus.Successful,token),HttpStatus.CREATED);
         }
         catch (ValidationException v) {
             return new ResponseEntity<>(new ResponseMessage(403, ResponseStatus.Failure,v.getExceptionMessage()), HttpStatus.FORBIDDEN);

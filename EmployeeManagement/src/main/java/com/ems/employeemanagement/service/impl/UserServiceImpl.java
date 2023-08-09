@@ -6,8 +6,11 @@ import com.ems.employeemanagement.model.User;
 import com.ems.employeemanagement.exception.ValidationException;
 import com.ems.employeemanagement.repository.UserRepository;
 import com.ems.employeemanagement.service.UserService;
+import com.ems.employeemanagement.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -15,6 +18,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -38,13 +47,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(LoginRequest loginRequest, String traceId) throws ValidationException{
+    public String login(LoginRequest loginRequest, String traceId) throws ValidationException{
         logger.info("{}: Function start: UserServiceImpl.login()",traceId);
         User userInDb = userRepository.findByEmailIgnoreCaseAndPassword(loginRequest.getEmail(),loginRequest.getPassword());
         if (userInDb==null) throw new ValidationException("User doesn't Exist..");
-        User user = new User(loginRequest.getEmail(),loginRequest.getPassword());
+        if (!passwordEncoder.matches(loginRequest.getPassword(),userInDb.getPassword())) {
+            throw new ValidationException("Email Id or password is incorrect");
+        }
+
+        String token = jwtUtils.generateJwt(userInDb);
+
         logger.info("{}: Function end: UserServiceImpl.login()",traceId);
-        return user;
+        return token;
     }
 
 

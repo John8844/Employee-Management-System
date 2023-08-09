@@ -25,5 +25,5 @@ public interface UserService {
      * @return
      * @throws ValidationException
      */
-    User login(LoginRequest loginRequest, String traceId) throws ValidationException;
+    String login(LoginRequest loginRequest, String traceId) throws ValidationException;
 }
