@@ -38,8 +38,10 @@ public class UserServiceImpl implements UserService {
         logger.info("{}: Function start: UserServiceImpl.signUp()",traceId);
         //validation
         if (userInDB!=null) throw new ValidationException("User already Exist..");
+        String encoderPassword = passwordEncoder.encode(userRequest.getPassword());
+
         //request to model
-        User user=new User(userRequest.getName(),userRequest.getEmail(),userRequest.getPhoneNumber(),userRequest.getPassword());
+        User user=new User(userRequest.getName(),userRequest.getEmail(),userRequest.getPhoneNumber(),encoderPassword);
         //save db
         User newUser = userRepository.save(user);
 
@@ -50,12 +52,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public String login(LoginRequest loginRequest, String traceId) throws ValidationException{
         logger.info("{}: Function start: UserServiceImpl.login()",traceId);
-        User userInDb = userRepository.findByEmailIgnoreCaseAndPassword(loginRequest.getEmail(),loginRequest.getPassword());
+        User userInDb = fetchUserByEmail(loginRequest.getEmail());
+        System.out.println(userInDb.getPassword());
+        System.out.println(loginRequest.getPassword());
+        System.out.println(passwordEncoder.matches(loginRequest.getPassword(),userInDb.getPassword()));
         if (userInDb==null) throw new ValidationException("User doesn't Exist..");
         if (!passwordEncoder.matches(loginRequest.getPassword(),userInDb.getPassword())) {
             throw new ValidationException("Email Id or password is incorrect");
         }
-
         String token = jwtUtils.generateJwt(userInDb);
 
         logger.info("{}: Function end: UserServiceImpl.login()",traceId);
@@ -65,5 +69,9 @@ public class UserServiceImpl implements UserService {
 
     public User fetchUser(String userName){
         return userRepository.findUserByName(userName);
+    }
+
+    public User fetchUserByEmail(String email){
+        return userRepository.findUserByEmail(email);
     }
 }

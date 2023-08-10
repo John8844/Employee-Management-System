@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.controller;
 
+import com.ems.employeemanagement.advice.AccessDeniedException;
 import com.ems.employeemanagement.dto.EmployeeRequest;
 import com.ems.employeemanagement.exception.ValidationException;
 import com.ems.employeemanagement.model.Employee;

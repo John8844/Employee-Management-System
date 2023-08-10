@@ -63,12 +63,12 @@ public class UserController {
      */
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) throws ValidationException{
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest){
         String traceId = Util.getTrackingId();
         logger.info("{}: Post Request to login User, Email: {}",traceId,loginRequest.getEmail());
         try {
             String token = userService.login(loginRequest,traceId);
-            return new ResponseEntity<>(new ResponseMessage(201, ResponseStatus.Successful,token),HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseMessage(201, ResponseStatus.Successful,token),HttpStatus.OK);
         }
         catch (ValidationException v) {
             return new ResponseEntity<>(new ResponseMessage(403, ResponseStatus.Failure,v.getExceptionMessage()), HttpStatus.FORBIDDEN);

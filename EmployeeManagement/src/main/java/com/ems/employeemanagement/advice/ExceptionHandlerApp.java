@@ -15,22 +15,30 @@ import java.util.Map;
 public class ExceptionHandlerApp {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String,String> handleException(MethodArgumentNotValidException exception){
-        Map<String,String> errorMap = new HashMap<>();
-        exception.getBindingResult().getFieldErrors().forEach(error ->{
-            errorMap.put(error.getField(),error.getDefaultMessage());
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException exception) {
+        Map<String, String> errorMap = new HashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error -> {
+            errorMap.put(error.getField(), error.getDefaultMessage());
         });
-        return errorMap;
+        return ResponseEntity.badRequest().body(errorMap);
     }
-    @ExceptionHandler
-    public ResponseEntity handleAccessDeniedException(AccessDeniedException e){
 
-        ResponseMessage responseMessage=new ResponseMessage();
-
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ResponseMessage> handleAccessDeniedException(AccessDeniedException e) {
+        ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         responseMessage.setResponseStatus(ResponseStatus.Failure);
         responseMessage.setMessage("Access Denied..");
+        return ResponseEntity.status(responseMessage.getStatusCode()).body(responseMessage);
+    }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseMessage> handleGenericException(Exception e) {
+        ResponseMessage responseMessage = new ResponseMessage();
+        responseMessage.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseMessage.setResponseStatus(ResponseStatus.Failure);
+        responseMessage.setMessage("Internal Server Error");
         return ResponseEntity.status(responseMessage.getStatusCode()).body(responseMessage);
     }
 }
+
