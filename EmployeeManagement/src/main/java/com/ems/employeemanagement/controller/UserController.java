@@ -78,4 +78,5 @@ public class UserController {
             return new ResponseEntity<>(new ResponseMessage(500, ResponseStatus.Failure,"Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

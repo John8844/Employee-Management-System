@@ -53,9 +53,6 @@ public class UserServiceImpl implements UserService {
     public String login(LoginRequest loginRequest, String traceId) throws ValidationException{
         logger.info("{}: Function start: UserServiceImpl.login()",traceId);
         User userInDb = fetchUserByEmail(loginRequest.getEmail());
-        System.out.println(userInDb.getPassword());
-        System.out.println(loginRequest.getPassword());
-        System.out.println(passwordEncoder.matches(loginRequest.getPassword(),userInDb.getPassword()));
         if (userInDb==null) throw new ValidationException("User doesn't Exist..");
         if (!passwordEncoder.matches(loginRequest.getPassword(),userInDb.getPassword())) {
             throw new ValidationException("Email Id or password is incorrect");
